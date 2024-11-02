@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Kyle Wong" />
+  <title>ee100cc64d754b0a88aaafe3b459ee13</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">CS180 Project 4A</h1>
+<p class="author">Kyle Wong</p>
+<p class="date">October 2023</p>
+</header>
+<h1 id="IMAGE WARPING and MOSAICING">IMAGE WARPING and MOSAICING</h1>
+<h2 id="Shoot the Pictures">Shoot the Pictures</h2>
+<p>
+I shot the pictures with my Pixel 4 camera which shoots pictures at 2268x4032 with a 12.2 megapixel camera. 
+This image size is too large so I downsampled it to a size of 900x1600. 
+I tried using the same aperature and exposure settings for each photo. 
+</p>
+<h2 id="Recovering Homographies">Recovering Homographies</h2>
+<p>To do a projective transformation, w want to recover a 3x3 homography matrix, H, from one set of points to another. 
+We have 8 unknowns, which means this can be solved with just 4 points. However, this might be prone to noise so we can use more points 
+and create an overdetermined system. We can solve this using Least Squares to find H.</p>
+<img src="homography.jpg" id="fig:awesome_image2"
+alt="Homography calculation" />
+<figcaption aria-hidden="true">Homography calculation</figcaption>
+</figure>
+<h2 id="Image Rectification">Image Rectification</h2>
+<p>Since we have found a way to get the homography matrix, we can do this neet trick of "rectification," i.e. warping the plane as 
+if the object was upfront and right before you (front-parallel). 
+We have one image, so we need to choose a set of correspondance points that we know the correct shape of. A good example are the corners of a box,
+which we know should be square or rectangular.
+Then, I just have to choose corresponding points of a similar sized square and compute the homography between these set of points.
+Finally, just warp the image to make it front-parallel.</p>
+<figure>
+<img src="box_points.png" id="fig:awesome_image2" alt="Pizza box original points" />
+<figcaption aria-hidden="true">Pizza box original points</figcaption>
+</figure>
+<figure>
+<img src="box_rectified.png" id="fig:awesome_image2" alt="Pizza box rectified" />
+<figcaption aria-hidden="true">Pizza box rectified</figcaption>
+</figure>
+<figure>
+<img src="card_points.png" id="fig:awesome_image2" alt="Card original points" />
+<figcaption aria-hidden="true">Card original points</figcaption>
+</figure>
+<figure>
+<img src="card_rectified.png" id="fig:awesome_image2" alt="Card rectified" />
+<figcaption aria-hidden="true">Card rectified</figcaption>
+</figure>
+<h2 id="Blending Images into a Mosaic">Blending Images into a Mosaic</h2>
+<p>Now we have the tools to create a mosaic of multiple images that covers a wider perception field than a single image.
+My procedure was to find the correspondance points between a series of images that covers around 40-70% of another image.
+I would have a left, middle, and right image. The middle image would be the image that I would make the center naturally. 
+I pick 4 correspondance points for each pair of homography. One for the left-middle pair. One for the right-middle pair.
+We can get the homographies for these pairs and compute the warped image.
+Then, we have a warped image of the same size that need to stiched together.
+I stitched each photo each with the middle image. Then I combined those two stiched photos into one photo, lining up 1 specific point that exists in each stiched photo.
+Next, I had to blend the image. I just did a simple weighted average of the images. 
+I find the area that overlaps and average the pixels and keep the rest of the pixels the same.
+Unfortunately, I do get aliasing with a black line that shows up between each photo, but other than that it blends well.</p>
+<figure>
+<img src="l.jpg" id="fig:awesome_image2" alt="l" />
+<figcaption aria-hidden="true">Left side of 2nd floor way west</figcaption>
+</figure>
+<figure>
+<img src="m.jpg" id="fig:awesome_image2" alt="m" />
+<figcaption aria-hidden="true">Middle side of 2nd floor way west</figcaption>
+</figure>
+<figure>
+<img src="r.jpg" id="fig:awesome_image2" alt="r" />
+<figcaption aria-hidden="true">Right side of 2nd floor way west</figcaption>
+</figure>
+<figure>
+<img src="mosaic_topwaywest.png" id="fig:awesome_image2" alt="Mosaic of 2nd floor way west" />
+<figcaption aria-hidden="true">Mosaic of 2nd floor way west</figcaption>
+</figure>
+
+<figure>
+<img src="lcar.jpg" id="fig:awesome_image2" alt="lcar" />
+<figcaption aria-hidden="true">Left side of northside</figcaption>
+</figure>
+<figure>
+<img src="mcar.jpg" id="fig:awesome_image2" alt="mcar" />
+<figcaption aria-hidden="true">Middle side of northside</figcaption>
+</figure>
+<figure>
+<img src="rcar.jpg" id="fig:awesome_image2" alt="rcar" />
+<figcaption aria-hidden="true">Right side of northside</figcaption>
+</figure>
+<figure>
+<img src="mosaic_northside.png" id="fig:awesome_image2" alt="Mosaic of northside" />
+<figcaption aria-hidden="true">Mosaic of northside</figcaption>
+</figure>
+
+<figure>
+<img src="lww.jpg" id="fig:awesome_image2" alt="lww" />
+<figcaption aria-hidden="true">Left side of 1st floor way west</figcaption>
+</figure>
+<figure>
+<img src="mww.jpg" id="fig:awesome_image2" alt="mww" />
+<figcaption aria-hidden="true">Middle side of 1st floor way west</figcaption>
+</figure>
+<figure>
+<img src="rww.jpg" id="fig:awesome_image2" alt="rww" />
+<figcaption aria-hidden="true">Right side of 1st floor way west</figcaption>
+</figure>
+<figure>
+<img src="mosaic_botwaywest.png" id="fig:awesome_image2" alt="Mosaic of 1st floor way west" />
+<figcaption aria-hidden="true">Mosaic of 1st floor way west</figcaption>
+</figure>
+
+<h1 id="reflection">Reflection</h1>
+<p>This was really cool. I've taken some panaramas before and never really thought about how it was made.
+I also didn't think I could just change the perspective of any image. 
+</p>
+
+<h1 id="Detecting corner features in an image">Detecting corner features in an image</h1>
+<p>We want to find keypoints in our image. We do this by using a harris corner detector,
+where for each point we give it a value between 0 and 1 for its harris cornerness.
+We convolve it with a 3x3 kernel that will find each point's harrisness.
+After this, we take points above a certain harris threshold that we set as our harris corners. 
+Below you can see the harris corners for two images with a threshold of 0.2.
+</p>
+<figure>
+<img src="harris_corners.png" id="fig:awesome_image2" alt="harris_corners" />
+<figcaption aria-hidden="true">Harris corners inside a building with lots of edges</figcaption>
+</figure>               
+
+<h1 id="Extracting a Feature Descriptor for each feature point">Extracting a Feature Descriptor for each feature point</h1>
+<h2 id="Adaptive Non-Maximal Suppression">Adaptive Non-Maximal Suppression</h2>
+<p>
+There are a lot of harris corners and many of them are clustered closely together.
+To get a sparser set of key points, we will use a technique known as ANMS. 
+ANMS will make an ordering of our points based on their harrisness and distance from other points, as seen below.
+We take the first N points in our ANMS ordering as our keypoints. I set N to be 250 points.
+</p>
+<figure>
+<img src="anms_formula.png" id="fig:awesome_image2" alt="anms_formula" />
+</figure>   
+<figure>
+<img src="anms.png" id="fig:awesome_image2" alt="anms" />
+<figcaption aria-hidden="true">ANMS inside a building with lots of edges</figcaption>
+</figure>   
+<h2 id="Feature Descriptor">Feature Descriptor</h2>
+<p>
+Now when we want to match our points, and we want to take into consideration our surroundings.
+We will capture a 40x40 patch and then downsample to a normalized 8x8 patch. 
+This will act as a blurred descriptor that will capture the most of the feature with less noise.
+</p>      
+
+<h1 id="Matching these feature descriptors between two images">Matching these feature descriptors between two images</h1>
+<p>
+For feature matching, we will take a point set from one image and find the nearest neighbors. 
+To do this, we will find the sum of squared differences of their feature descriptors, 
+then we will find the two points that result in the lowest error and that will be our nearest neighbor. 
+We will also find our 2nd nearest neighbor.
+We have a thresold to determine which pairs of neighbors are good matches. 
+I decided to take any matches where the SSD1/SSD2 was less than a thresold of 1.15 and 1.5 for my left image matches and right image matches respectively.
+Below, we see the result of our prelimary feature matching.
+</p>
+<figure>
+<img src="features.png" id="fig:awesome_image2" alt="features" />
+<figcaption aria-hidden="true">Our chosen features for the left and middle matches</figcaption>
+</figure>   
+
+<h1 id="Use a robust method (RANSAC) to compute a homography">Use a robust method (RANSAC) to compute a homography</h1>
+<p>
+But, we still have bad matches.
+We will use RANSAC to find the best homographic transformation between our sets of points. 
+We will do this in a random algorithm with N steps, where on each step we choose 4 random point correspondences, 
+compute their homographic matrix, and then find how many other points properly transformed to their corresponding point in the other image (inliers). 
+We will take the transformation that produces the most amount of points that have been mapped correctly. 
+If we choose a large enough N, this will usually give a good homography.
+</p>
+<figure>
+<img src="ransac.png" id="fig:awesome_image2" alt="ransac" />
+<figcaption aria-hidden="true">RANSAC on our images</figcaption>
+</figure>  
+
+<h1 id="Final Results--Mosaics">Final Results--Mosaics</h1>
+<p>
+Here's my automatic stitching final results! Left is the manual alignment. Right is the automatic alignment. 
+The automatic alignment is clearly better for the mosaic of the 3rd floor of way west.
+</p>
+<figure>
+<img src="combined_topww.png" id="fig:awesome_image2" alt="topww" />
+<figcaption aria-hidden="true">3rd floor way west</figcaption>
+</figure>  
+<figure>
+<img src="combined_ww.png" id="fig:awesome_image2" alt="ww" />
+<figcaption aria-hidden="true">1st floor way west</figcaption>
+</figure>  
+<figure>
+<img src="combined_car.png" id="fig:awesome_image2" alt="car" />
+<figcaption aria-hidden="true">Northside</figcaption>
+</figure>  
+
+<h1 id="What I Have Learned">What I Have Learned</h1>
+<p>
+I learned how to do homographies and it was so cool to automate the key points. 
+It was cool seeing how different images from different rotations could be stiched together using homographies.
+</p>
+
+</body>
+</html>
